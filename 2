@@ -1,0 +1,86 @@
+class Transaction { //지출 또는 수입 내역을 나타냄
+public:
+    double amount;
+    string category;
+    string date;
+
+    Transaction(double amount, const string& category, const string& date)
+        : amount(amount), category(category), date(date) {}
+}; //amount, category, date를 매개변수로 받고 변수를 초기화
+
+class Account {
+public:
+    string username;
+    string id;
+    string password;
+    double balance;
+    Transaction* transactions; //Transaction 객체 배열을 가리키는 포인터
+    int transactionCount; //현재 저장된 거래 내역의 개수
+    int transactionCapacity; //현재 할당된 거래 내역 배열의 용량
+
+    Account(const string& username, const string& id, const string& password)
+        : username(username), id(id), password(password), balance(0.0), transactions(nullptr), transactionCount(0), transactionCapacity(0) {}
+//username, id, password를 매개변수로 받고 생성자의 초기화 목록을 통해 transactions는 nullptr로 초기화, transactionCount와 transactionCapacity는 0으로 초기화
+  
+    void addTransaction(const Transaction& transaction) { //Transaction 객체를 받아서 거래 내역을 추가
+        if (transactionCount >= transactionCapacity) {
+            // 배열 크기를 증가시킴
+            int newCapacity = (transactionCapacity == 0) ? 1 : transactionCapacity * 2;
+            Transaction* newTransactions = new Transaction[newCapacity];
+            if (transactions != nullptr) {
+                copy(transactions, transactions + transactionCount, newTransactions);
+                delete[] transactions;
+            }
+            transactions = newTransactions;
+            transactionCapacity = newCapacity;
+        }
+        // 배열에 객체 추가
+        transactions[transactionCount] = transaction;
+        transactionCount++;
+    }
+
+};
+
+
+    case 1: // 지출/수입 내역 기록 기능 구현
+    {
+        int type;
+        double amount;
+        string category;
+        string date;
+
+        cout << "1. 지출" << endl;
+        cout << "2. 수입" << endl;
+        cout << "입력할 내역의 유형을 선택하세요: ";
+        cin >> type;
+
+        if (type == 1) {
+            cout << "지출 금액을 입력하세요: ";
+            cin >> amount;
+            amount = -amount; // 지출은 음수로 표시
+        }
+        else if (type == 2) {
+            cout << "수입 금액을 입력하세요: ";
+            cin >> amount;
+        }
+        else {
+            cout << "잘못된 유형을 선택하였습니다." << endl;
+            break;
+        }
+
+        cout << "카테고리를 입력하세요: "; //카테고리 지정
+        cin >> category;
+
+        cout << "날짜를 입력하세요 (예: 2023-05-23): "; //날짜 입력
+        cin >> date;
+
+        // 내역을 저장
+        Transaction transaction{ amount, category, date };
+        account.addTransaction(transaction);
+
+        account.balance += amount;
+
+        cout << "기록되었습니다." << endl;
+
+        break;
+    }
